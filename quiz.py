@@ -1,8 +1,9 @@
-import json, requests, unittest
+import json, requests, unittest 
+from itertools import islice
 from flask import Flask, jsonify
-DOMAIN= "api.github.com"
-
-@app.route("/followers/<username>")
+DOMAIN= "https://api.github.com"
+app = Flask(__name__)
+@app.route("/<github_id>/")
 def followers(github_id):
     follower_ids = []
     """Write an API endpoint that accepts a GitHub ID and returns Follower GitHub ID’s (up to 5 Followers total) associated with the passed in GitHub ID.  Retrieve data up to 3 levels deep, repeating the process of retrieving Followers (up to 5 Followers total) for each Follower found.  Data should be returned in JSON format """
@@ -10,10 +11,12 @@ def followers(github_id):
         if num <= 0:
           return jsonify(follower_ids)
         num -= 1
-        followers = requests.get("/users/{githubid}/followers".format(github_id)).json()
-        for user in followers[0:5]:
+        followers = requests.get(DOMAIN+"/users/{0}/followers".format(github_id)).json()
+        print(followers)
+        f = islice(followers,5)
+        for user in f : 
           id = user["login"]
-          follower_ids.append()
+          follower_ids.append(id)
           pull(id,num)
     pull(id,3)
     
